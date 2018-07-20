@@ -8,13 +8,13 @@ secret: ChangeMe
 corsAllowOrigin: http://example.com
 
 php:
-  repository: gcr.io/personal-dev-environment/php
+  repository: gcr.io/symfony-4-skeleton-docker/php
   tag: latest
   pullPolicy: Always
   replicaCount: 1
 
 nginx:
-  repository: gcr.io/personal-dev-environment/nginx
+  repository: gcr.io/symfony-4-skeleton-docker/nginx
   tag: latest
   pullPolicy: Always
   replicaCount: 1
@@ -22,7 +22,7 @@ nginx:
 varnish:
   enabled: true
   #url: https://example.com
-  repository: gcr.io/personal-dev-environment/varnish
+  repository: gcr.io/symfony-4-skeleton-docker/varnish
   tag: latest
   pullPolicy: Always
   replicaCount: 1
