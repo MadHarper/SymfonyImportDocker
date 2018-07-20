@@ -20,7 +20,7 @@ before_install:
         curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - ;
         sudo apt-get update && sudo apt-get install google-cloud-sdk;
     fi
-  - openssl aes-256-cbc -K $encrypted_6797df738197_key -iv $encrypted_6797df738197_iv -in client_secrets.json.enc -out $GOOGLE_APPLICATION_CREDENTIALS -d
+  - openssl aes-256-cbc -K $encrypted_77dd2349cf67_key -iv $encrypted_77dd2349cf67_iv -in client_secrets.json.enc -out $GOOGLE_APPLICATION_CREDENTIALS -d
   - if [ -a $GOOGLE_APPLICATION_CREDENTIALS ]; then
         gcloud -q auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS;
     fi
