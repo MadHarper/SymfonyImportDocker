@@ -4,6 +4,9 @@ services:
     php:
         build:
             context: ./symfony
+            args:
+              UID: $UID
+              GUID: $GUID
         container_name: php
         depends_on:
             - db
@@ -18,33 +21,38 @@ services:
             # If you develop on Linux change this to remote_host=172.17.0.1
             XDEBUG_CONFIG: "remote_host=docker.for.mac.localhost idekey=IDE_XDEBUG"
             PHP_IDE_CONFIG: "serverName=docker-server"
+            REDIS_HOST: redis
+            REDIS_PORT: 6379
 
     symfony:
         build:
             context: ./symfony
             dockerfile: Dockerfile.nginx
+            args:
+              UID: $UID
+              GUID: $GUID
         container_name: symfony
         depends_on:
             - php
         env_file:
             - ./symfony/.env
         ports:
-            - "8080:80"
+            - 8047:80
         volumes:
             - ./symfony/public:/app/symfony/public:ro
 
-    cache-proxy:
-        build:
-            context: ./symfony/
-            dockerfile: ./Dockerfile.varnish
-        container_name: cache-proxy
-        depends_on:
-            - symfony
-        # Comment out this volume in production
-        volumes:
-            - ./symfony/docker/varnish/conf:/etc/varnish:ro
-        ports:
-            - "8081:80"
+#    cache-proxy:
+#        build:
+#            context: ./symfony/
+#            dockerfile: ./Dockerfile.varnish
+#        container_name: cache-proxy
+#        depends_on:
+#            - symfony
+#        # Comment out this volume in production
+#        volumes:
+#            - ./symfony/docker/varnish/conf:/etc/varnish:ro
+#        ports:
+#            - 8081:80
 
     db:
         # In production, you may want to use a managed database service
@@ -57,7 +65,22 @@ services:
         volumes:
             - db-data:/var/lib/postgresql/data:rw
         ports:
-            - "5432:5432"
+            - 5371:5432
+
+    node:
+        build:
+            context: ./symfony
+            dockerfile: Dockerfile.nginx
+            args:
+              UID: 1000
+              GUID: 1000
+        container_name: node
+        depends_on:
+            - php
+        env_file:
+            - ./symfony/.env
+        volumes:
+            - ./symfony:/app/symfony:rw,cached
 
     adminer:
       image: adminer
@@ -68,19 +91,25 @@ services:
       ports:
         - 2000:8080
 
-    h2-proxy:
-        # Don't use this proxy in prod
-        build:
-            context: ./h2-proxy
-            dockerfile: ./Dockerfile
-        container_name: h2-proxy
-        depends_on:
-            - symfony
-            - cache-proxy
-        ports:
-            - "80:80"
-            - "443:443"
-            - "8443:8443"
+    redis:
+        image: redis:4.0.2
+        hostname: redis
+        volumes:
+          - ./symfony/docker/redis:/data
+
+#    h2-proxy:
+#        # Don't use this proxy in prod
+#        build:
+#            context: ./h2-proxy
+#            dockerfile: ./Dockerfile
+#        container_name: h2-proxy
+#        depends_on:
+#            - symfony
+#            - cache-proxy
+#        ports:
+#            - "80:80"
+#            - "443:443"
+#            - "8443:8443"
 
 volumes:
     db-data: {}

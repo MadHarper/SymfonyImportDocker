@@ -1,0 +1,26 @@
+App\Entity\Article:
+    constraints:
+      - Callback: validateOdd
+    properties:
+      title:
+          - NotBlank: ~
+          - Length:
+              min: 2
+              max: 20
+              minMessage: 'Title must be at least {{ limit }} characters long'
+              maxMessage: 'YTitle cannot be longer than {{ limit }} characters'
+      content:
+          - NotBlank: ~
+
+App\Entity\Users:
+    constraints:
+      - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: mail
+    properties:
+      mail:
+          - NotBlank: ~
+          - Email:
+              message: The email "{{ value }}" is not a valid email.
+              checkMX: true
+      name:
+          - NotBlank: ~
+

@@ -1,6 +1,12 @@
 FROM composer:1.6
 FROM php:7.2-fpm-alpine3.7
 
+ARG UID
+ARG GUID
+RUN echo http://dl-2.alpinelinux.org/alpine/edge/community/ >> /etc/apk/repositories
+RUN apk --no-cache add shadow && usermod -u 1000 www-data
+RUN apk --no-cache add shadow && groupmod -g 1000 www-data
+
 RUN apk add --no-cache \
 		git
 
@@ -20,9 +26,11 @@ RUN set -xe \
 	&& pecl install \
 		apcu-${APCU_VERSION} \
 		xdebug-${XDEBUG_VERSION} \
+		redis \
 	&& docker-php-ext-enable --ini-name 20-apcu.ini apcu \
 	&& docker-php-ext-enable --ini-name 05-opcache.ini opcache \
 	&& docker-php-ext-enable --ini-name xdebug.ini xdebug \
+	&& docker-php-ext-enable --ini-name redis.ini redis \
 	&& runDeps="$( \
 		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local/lib/php/extensions \
 			| tr ',' '\n' \
@@ -35,6 +43,14 @@ RUN set -xe \
        echo "xdebug.remote_enable=On"; \
        echo "xdebug.remote_autostart=Off"; \
     }  >> /usr/local/etc/php/conf.d/xdebug.ini
+
+#RUN pecl install -o -f redis \
+#    &&  rm -rf /tmp/pear \
+#    &&  docker-php-ext-enable redis
+
+#RUN pecl install -o -f redis \
+#    &&  rm -rf /tmp/pear \
+#    &&  echo "extension=redis.so" > /usr/local/etc/php/conf.d/redis.ini
 
 RUN curl -L https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.11.1/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer \
     && chmod +x /usr/local/bin/php-cs-fixer \

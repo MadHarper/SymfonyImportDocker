@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>FROM</h1>
+
+    <div class="row">
+        <div class="col-2"></div>
+        <div class="col-4">
+            {{ form_start(articleForm, {'attr': {'novalidate': 'novalidate'}}) }}
+                {{ form_row(articleForm.title, {'attr': {'class': 'form-control'}}) }}
+
+                <div class="form-group row">
+                    {{ form_errors(articleForm.content) }}
+                    {{ form_widget(articleForm.content, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                {{ form_row(articleForm.publishedAt, {'attr': {'class': 'form-control'}}) }}
+                {{ form_row(articleForm.author, {'attr': {'class': 'form-control'}}) }}
+                {{ form_row(articleForm.heartCount, {'attr': {'class': 'form-control'}}) }}
+                <button type="submit" class="btn btn-primary">Ok</button>
+            {{ form_end(articleForm) }}
+        </div>
+        <div class="col-2"></div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/main/main.js') }}"></script>
+{% endblock %}

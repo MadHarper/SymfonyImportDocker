@@ -1,0 +1,8 @@
+monolog:
+    channels: ['my_own']
+    handlers:
+        myown_logging:
+            type: stream
+            path: "%kernel.logs_dir%/my_own.log"
+            max_level: info
+            channels: ["my_own"]
