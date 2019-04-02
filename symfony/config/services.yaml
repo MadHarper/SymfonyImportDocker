@@ -53,3 +53,5 @@ services:
         arguments:
             $cache: "@app.cache.widget"
 
+    App\MessageHandler\NotificationHandler:
+            tags: [messenger.message_handler]
